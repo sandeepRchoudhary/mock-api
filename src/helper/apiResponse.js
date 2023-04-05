@@ -1,4 +1,4 @@
-const apiResponse=(res,statusCode,message,userData=null)=>{
-   return res.status(statusCode).json({"message":message,"result":userData})
+const apiResponse=(res,statusCode,message,data=null)=>{
+   return res.status(statusCode).json({"message":message,"result":data});
 }
 export default apiResponse;

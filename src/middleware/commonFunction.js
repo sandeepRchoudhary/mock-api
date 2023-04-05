@@ -15,3 +15,8 @@ export const productInputValidator=(req,res,next)=>{
     }
     next()
 }
+
+export const pagination=(arr,pageNumber=1,perPage=10)=>{
+    const perPagePagination=arr.slice((pageNumber-1)*perPage,pageNumber*perPage);
+    return perPagePagination;
+}
