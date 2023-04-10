@@ -1,30 +1,34 @@
 import express from 'express';
 
-import { pagination, productInputValidator } from '../middleware/commonFunction.js';
-import { prodData } from '../mock-data/productData.js';
+import { productInputValidator } from '../middleware/validator.js';
+import { productsData } from '../mock-data/productData.js';
 import apiResponse from '../helper/apiResponse.js';
+import { findById, pagination } from '../helper/commonFunction.js';
 
 const productRoute = express.Router();
 
-const data = prodData;
+const products = productsData;
 
+//fetching all products
 productRoute.get("/", (req, res) => {
-    if (data) {
-        return apiResponse(res, 200, "data fetched successfully!", data);
+    if (products) {
+        return apiResponse(res, 200, "products fetched successfully!", products);
     } else {
-        return apiResponse(res, 404, "data not found");
+        return apiResponse(res, 404, "products not found");
     }
 })
 
+//pagination for products
 productRoute.get('/q?', (req, res) => {
     const { page_number, per_page } = req.query
-    const products = pagination(data,page_number,per_page);
-    return apiResponse(res,200,"product by pagination ",products)
+    const products = pagination(products, page_number, per_page);
+    return apiResponse(res, 200, "product by pagination", products)
 })
 
+//fetching the single product from list of product 
 productRoute.get("/:id", (req, res) => {
-    const singleProduct = req.params.id
-    let productExist = data.find((data) => data.id == singleProduct);
+    const productId = req.params.id
+    const productExist = findById(products, productId);
     if (productExist) {
         return apiResponse(res, 200, "product fetched successfully", productExist);
     } else {
@@ -32,10 +36,11 @@ productRoute.get("/:id", (req, res) => {
     }
 })
 
+//deletion in products
 productRoute.delete('/:id', (req, res) => {
     const isExists = req.params.id;
     if (isExists) {
-        let deletedUser = data.filter((data) => data.id != isExists);
+        let deletedUser = products.filter((data) => data.id != isExists);
         return apiResponse(res, 200, 'user deleted', deletedUser);
     } else {
         return apiResponse(res, 404, 'user not exists');
@@ -43,12 +48,14 @@ productRoute.delete('/:id', (req, res) => {
 
 })
 
+//createing prducts 
 productRoute.post("/", productInputValidator, (req, res) => {
     data.push(req.body);
     res.status(201).json({ "isCreated": data });
 });
 
-productRoute.put('/', (req, res) => {
+//update for product
+productRoute.patch('/', (req, res) => {
     const { id, title, body } = req.body
     const isExists = data.find((data) => data.id == id);
     if (isExists) {

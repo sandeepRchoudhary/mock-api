@@ -1,61 +1,64 @@
 import express from 'express';
 
-import { dynamicData } from "../mock-data/data.js";
 import apiResponse from '../helper/apiResponse.js';
-import { inputValidator } from '../middleware/commonFunction.js';
+import { userInputValidator } from '../middleware/validator.js';
+import { findById } from '../helper/commonFunction.js';
+import { usersData } from '../mock-data/usersData.js';
 
 const userRoute = express.Router();
 
-const data = dynamicData
+const users = usersData
 
-userRoute.get("/users", (req, res) => {
-    if (data) {
-        return apiResponse(res, 200, "data fetched successfully!", data);
+//getting all users from the users data
+userRoute.get("/", (req, res) => {
+    if (users) {
+        return apiResponse(res, 200, "users fetched successfully!", users);
     } else {
-        return apiResponse(res, 404, "data not found");
+        return apiResponse(res, 404, "users not found");
     }
 })
 
-userRoute.get("/users/:id", (req, res) => {
-    const singleUser = req.params.id
-    let user = data.find((data) => data.id == singleUser);
-    if(user){
-        return apiResponse(res,200,"user fetched successfully",user);
-    }else{
-        return apiResponse(res,404,'user not found');
+//getting single user from the users data
+userRoute.get("/:id", (req, res) => {
+    const userId = req.params.id
+    const user = findById(users, userId)
+    if (user) {
+        return apiResponse(res, 200, "user fetched successfully", user);
+    } else {
+        return apiResponse(res, 404, 'user not found');
     }
 })
 
-userRoute.delete('/users/:id', (req, res) => {
-    const isExists = req.params.id;
-    if(isExists){
-      let deletedUser = data.filter((data) => data.id != isExists);
-        return apiResponse(res,200,'user deleted',deletedUser);
-    }else{
-        return apiResponse(res,404,'user not exists')
+//deleting user from the user users
+userRoute.delete('/:id', (req, res) => {
+    const userId = req.params.id;
+    const user = findById(users, userId)
+    if (user) {
+        const filteredUser = removeById(users, userId)
+        return apiResponse(res, 200, 'remaining users', filteredUser);
+    } else {
+        return apiResponse(res, 404, 'user not exists')
     }
-   
 })
 
-userRoute.post("/users",inputValidator,(req, res) => {
-
-    data.push(req.body);
-    res.status(201).json({ "isCreated": data });
+//creating new user
+userRoute.post("/", userInputValidator, (req, res) => {
+    users.push(req.body);
+    return apiResponse(res, 201, "user created", users);
 });
 
-userRoute.put('/users', (req, res) => {
-
+//updating the user
+userRoute.patch('/', (req, res) => {
     const { id, name, email, phone } = req.body
-    const isExists = data.find((data) => data.id == id);
-    if (isExists) {
-        // isExists.id = id
-        isExists.name = name?name:isExists.name;
-        isExists.email = email?email:isExists.email;
-        isExists.phone = phone?phone:isExists.phone;
-        data.map((udata) =>udata.id==id?udata=isExists:udata);
-        return apiResponse(res,200,"updated successfully",data);
-    }else{
-        return apiResponse(res,404,'data yet to update',data)
+    const alreadyUser = findById(users, id);
+    if (alreadyUser) {
+        alreadyUser.name = name ? name : alreadyUser.name;
+        alreadyUser.email = email ? email : alreadyUser.email;
+        alreadyUser.phone = phone ? phone : alreadyUser.phone;
+        users.map((udata) => udata.id == id ? udata = alreadyUser : udata);
+        return apiResponse(res, 200, "user updated successfully", users);
+    } else {
+        return apiResponse(res, 404, 'user not found', users)
     }
 })
 

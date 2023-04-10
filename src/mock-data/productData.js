@@ -1,4 +1,5 @@
-export const prodData=[
+
+export const productsData=[
     {
       "id": 1,
       "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
