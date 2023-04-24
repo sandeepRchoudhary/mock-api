@@ -21,8 +21,8 @@ productRoute.get("/", (req, res) => {
 //pagination for products
 productRoute.get('/q?', (req, res) => {
     const { page_number, per_page } = req.query
-    const products = pagination(products, page_number, per_page);
-    return apiResponse(res, 200, "product by pagination", products)
+    const productsPerPage = pagination(products, page_number, per_page);
+    return apiResponse(res, 200, "product by pagination", productsPerPage)
 })
 
 //fetching the single product from list of product 
@@ -57,7 +57,7 @@ productRoute.post("/", productInputValidator, (req, res) => {
 //update for product
 productRoute.patch('/', (req, res) => {
     const { id, title, body } = req.body
-    const isExists = data.find((data) => data.id == id);
+    const isExists = findById(products,id);
     if (isExists) {
         // isExists.id = id
         isExists.title = title ? title : isExists.title;
