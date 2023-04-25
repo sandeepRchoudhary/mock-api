@@ -2,7 +2,7 @@ import express from 'express';
 
 import apiResponse from '../helper/apiResponse.js';
 import { userInputValidator } from '../middleware/validator.js';
-import { findById } from '../helper/commonFunction.js';
+import { findById, removeById } from '../helper/commonFunction.js';
 import { usersData } from '../mock-data/usersData.js';
 
 const userRoute = express.Router();

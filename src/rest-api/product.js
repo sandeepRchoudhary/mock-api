@@ -50,8 +50,8 @@ productRoute.delete('/:id', (req, res) => {
 
 //createing prducts 
 productRoute.post("/", productInputValidator, (req, res) => {
-    data.push(req.body);
-    res.status(201).json({ "isCreated": data });
+    products.push(req.body);
+    res.status(201).json({ "isCreated": products });
 });
 
 //update for product
@@ -62,10 +62,10 @@ productRoute.patch('/', (req, res) => {
         // isExists.id = id
         isExists.title = title ? title : isExists.title;
         isExists.body = body ? body : isExists.body
-        data.map((udata) => udata.id == id ? udata = isExists : udata);
-        return apiResponse(res, 200, "updated successfully", data);
+        products.map((udata) => udata.id == id ? udata = isExists : udata);
+        return apiResponse(res, 200, "updated successfully", products);
     } else {
-        return apiResponse(res, 404, 'data yet to update', data)
+        return apiResponse(res, 404, 'data yet to update', products)
     }
 })
 

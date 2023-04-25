@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { findById } from '../../../helper/commonFunction.js';
 import { productsData } from '../../../mock-data/productData.js';
 import { usersData } from '../../../mock-data/usersData.js'
